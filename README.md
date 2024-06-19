@@ -5,22 +5,35 @@ For this project, the data was collected from Spotify using Spotify’s API and 
 
 (https://open.spotify.com/playlist/37i9dQZEVXbMWDif5SCBJq)
 
-Services used: S3, IAM, Glue, Lambda, Athena, EventBridge
+AWS Services used:
+Lamda
+S3 bucket
+Cloudwatch
+Glue
+Athena
+The pipeline is divided into 3 parts:
+Extract
+Transform
+Load
 
-Process:
+🔶 Extract
 
-Created Spotify developer account to generate API keys.
-Assigned roles and policies for the services used thorough IAM.
-Created custom python package and generated custom layer to support spotipy library in AWS.
-Coded function to extract raw data using Spotify API and ‘spotipy’ python library.
-Automated data extraction using lambda triggers and EventBridge for a specified time and store data in ‘raw_data’ folder in S3 bucket.
-Executed transform function to convert the raw data into 3 csv files – album, artist, songs in S3
-Automated the process of transform function and to copy the transformed files into ‘processed_data’ folder and delete the data from ‘raw_data’ folder.
-Utilized Glue crawlers to infer schema and generate tables from the csv files.
-Queried the database using Athena to generate insights.
-It was a great experience using API to collect data and then transform this raw data into legible data using AWS. This was a fun project as I was able to work with real time data which keeps on updating.
+Data Extraction from Spotify API using Python on local using Spotipy.
+Using AWS Lambda to deploy the extraction function - spotify_api_data_extract.
+Applied Cloud Watch to automate and run Triggers every 1 min.
+Stored the extracted raw data in S3 Bucket in to_processed folder.
 
-Spotify Developer : https://developer.spotify.com
+🔶 Transform
+
+Added S3 triggers when new data comes in bucket, whenever new data comes, it will 2nd function for further transformation.
+Applied Data Transformation using AWS Lambda on function - spotify_transformation_load_function
+Storing the transformed data in S3 Bucket in different folders(Album, Artist, Song) and also moves data from to_processed to processed folder.
+
+🔶 Load
+
+Used Glue Crawler to infer schemas whenever there is new data in S3 Bucket.
+Create AWS Glue Data Catalog to manage the Metadata Repository.
+Use Amazon Athena to query and analyse the final dataset for desired information.
 
 ## Architecture
 ![Architecture Diagram](achitecture_diagram.png)
